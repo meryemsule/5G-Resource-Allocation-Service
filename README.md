@@ -1,13 +1,13 @@
-# SAYZEK 5G Resource Allocation Prototype
+# 5G Resource Allocation Prototype
 
-SAYZEK is a working 5G radio-resource allocation prototype for sub-ms service-aware scheduling decisions. The current runtime uses a Keras teacher traffic predictor, a distilled NumPy student predictor, a PPO-derived correction policy, and a guarded service-aware scheduler.
+This project is a working 5G radio-resource allocation prototype for sub-ms service-aware scheduling decisions. The current runtime uses a Keras teacher traffic predictor, a distilled NumPy student predictor, a PPO-derived correction policy, and a guarded service-aware scheduler.
 
 The system is a measured research prototype, not a field-ready telecom product. It demonstrates low-latency AI-assisted RRM decisions and exposes the results through FastAPI, Docker, and a Streamlit dashboard.
 
 ## Current Result
 
 ```text
-Runtime model source: sayzek-v2-fast-distilled-hybrid
+Runtime model source: v2-fast-distilled-hybrid
 Fast predictor:       available
 Policy source:        ppo-distilled-constant
 TTI target:           1 ms
@@ -44,7 +44,7 @@ flowchart LR
 The service-aware training pipeline reads packet-trace CSV files from `kimdaegyeom/5g-traffic-datasets`. Service labels are inferred from application/path names:
 
 - Video conferencing and live-streaming traces are mapped to `URLLC`.
-- stored streaming, game streaming, online gaming, and high-throughput app traces are mapped to `eMBB`.
+- Stored streaming, game streaming, online gaming, and high-throughput app traces are mapped to `eMBB`.
 - `mMTC` coverage is augmented with synthetic IoT-style traffic windows because the source dataset does not provide enough native mMTC traces.
 
 This synthetic component must be stated explicitly in the report.
@@ -64,7 +64,8 @@ report_output/                Metrics and generated reports
 ## Docker
 
 ```powershell
-cd sayzek$env:DOCKER_CONFIG="$PWD\.docker-cli"
+cd <project-folder>
+$env:DOCKER_CONFIG="$PWD\.docker-cli"
 docker compose up --build -d
 ```
 
@@ -82,13 +83,7 @@ Invoke-RestMethod http://127.0.0.1:8000/model/runtime
 
 ## Dashboard
 
-Open:
-
-```text
-http://127.0.0.1:8501
-```
-
-The dashboard shows:
+Open `http://127.0.0.1:8501`. The dashboard shows:
 
 - runtime model source and artifact status
 - TTI compliance and average latency
@@ -101,9 +96,9 @@ The dashboard shows:
 Generate baseline and ablation metrics:
 
 ```powershell
-docker compose exec -T sayzek-api python evaluate_ablation.py --count-per-service 35 --output-dir report_output
-docker cp sayzek-api:/app/report_output/ablation_summary.csv report_output\ablation_summary.csv
-docker cp sayzek-api:/app/report_output/ablation_report.md report_output\ablation_report.md
+docker compose exec -T api python evaluate_ablation.py --count-per-service 35 --output-dir report_output
+docker compose cp api:/app/report_output/ablation_summary.csv report_output/ablation_summary.csv
+docker compose cp api:/app/report_output/ablation_report.md report_output/ablation_report.md
 ```
 
 Run end-to-end API scenarios:
@@ -115,22 +110,4 @@ python run_end_to_end_scenarios.py --base-url http://127.0.0.1:8000 --output-dir
 ## Main Endpoints
 
 - `GET /health`
-- `GET /model/runtime`
-- `GET /metrics`
-- `GET /decision-logs`
-- `POST /predict`
-- `POST /predict_allocation`
-- `POST /sniff-and-predict`
-
-## Security
-
-Authentication is disabled by default for local demonstration. It can be enabled through `.env`:
-
-```env
-AUTH_ENABLED=true
-API_KEYS=demo-key-1,demo-key-2
-JWT_SECRET_KEY=change-me
-CORS_ORIGINS=http://localhost:3000,http://localhost:8501
-RATE_LIMIT_REQUESTS=120
-RATE_LIMIT_WINDOW_SECONDS=60
-```
+- `GET
