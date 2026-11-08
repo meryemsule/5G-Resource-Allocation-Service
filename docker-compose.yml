@@ -1,0 +1,36 @@
+services:
+  sayzek-api:
+    build: .
+    container_name: sayzek-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./report_output:/app/report_output
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  sayzek-dashboard:
+    build: .
+    container_name: sayzek-dashboard
+    command: ["streamlit", "run", "dashboard/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    env_file:
+      - .env
+    environment:
+      SAYZEK_API_BASE_URL: http://sayzek-api:8000
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./report_output:/app/report_output
+    depends_on:
+      - sayzek-api

@@ -1,0 +1,16 @@
+.git
+.github
+.docker-cli
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+report_output
+reliability_output
+data/*.sqlite3
+*.ipynb
+app/__pycache__
+tests/__pycache__
+training/__pycache__

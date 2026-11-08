@@ -1,0 +1,32 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Docker / local
+.docker-cli/
+*.db
+*.sqlite
+*.sqlite3
+
+# Veri ve üretilen çıktılar
+data/
+report_output/*
+!report_output/ablation_report.md
+!report_output/ablation_summary.csv
+!report_output/end_to_end_scenarios.md
+
+# Büyük model dosyaları (aşağıya bak)
+# models/*.zip
+# models/*.pth
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
